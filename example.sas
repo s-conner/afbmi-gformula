@@ -6,7 +6,7 @@ array age{*} age1-age6; array bmi{*} bmi1-bmi6; array sbp{*} sbp1-sbp6;
 * Generate sample size of 100;
 do i=1 to 100;
 
-	* Generate baseline age 45-55, SBP, BMI, and chf;
+	* Generate baseline age 45-55, SBP, BMI, and af;
 	id=i;
 	age1=45 + 10*rand('uniform');
 	bmi1 = min(60, 18 + (rand('lognormal')/0.1));
@@ -21,8 +21,8 @@ do i=1 to 100;
 		end;
 	end;
 	
-	if bmi1>30 then chfage=46 + rand('weibull', 2, 25);
-	else chfage=46 + rand('weibull', 2, 40);
+	if bmi1>30 then afage=46 + rand('weibull', 2, 25);
+	else afage=46 + rand('weibull', 2, 40);
 
 	output;
 end;
@@ -40,12 +40,12 @@ do i=1 to 6;
 	age=round(aage{i},1); bmi=abmi{i}; sbp=asbp{i]; exam=i; 
 	output;
 end;
-keep id age exam bmi sbp chf chfage;
+keep id age exam bmi sbp af afage;
 run;
 
 proc means; run;
 
-* Interpolate - note that chfage is fixed but carried forward to all time points, so we can apply the same code ;
+* Interpolate - note that afage is fixed but carried forward to all time points, so we can apply the same code ;
 data first; set long; by id; if first.id; rename age=firstage; keep id age; run;
 data last; set long; by id; if last.id; rename age=lastage; keep id age; run;
 data firstlast; merge first last; by id; run;
@@ -70,7 +70,7 @@ else if first&var=. then first&var=temp&var;
 %mend;
 data years2; drop temp:;
 set years2; 
-%first(chfage); %first(exam); %first(bmi); %first(sbp); 
+%first(afage); %first(exam); %first(bmi); %first(sbp); 
 run;
 proc sort data=years2; by id descending rowage; run;
 
@@ -82,7 +82,7 @@ else if last&var=. then last&var=temp&var;
 %mend;
 data years2; drop temp:; 
 set years2; 
-%last(chfage); %last(exam); %last(bmi); %last(sbp); 
+%last(afage); %last(exam); %last(bmi); %last(sbp); 
 run;
 proc sort data=years2; by id rowage; run;
 
@@ -101,7 +101,6 @@ quit;
 proc sort; by id rowage; run;
 
 
-** LEFT OFF HERE **;
 *Linear interpolation;
 %macro interp(var);
 new&var=&var;
@@ -116,17 +115,17 @@ else if new&var=. then new&var=round(first&var + ((last&var-first&var)*num/denom
 
 data interp; 
 set years4; 
-%interp(chfage); %interp(bmi); %interp(sbp);  
+%interp(afage); %interp(bmi); %interp(sbp);  
 
-if .<newchfage<rowage+1 then chf=1; else chf=0;
+if .<newafage<rowage+1 then af=1; else af=0;
 baseage=firstage;
 
-drop first: last: chfage age denom num bmi sbp;
+drop first: last: afage age denom num bmi sbp;
 run;
 
-* Gformula macro will get an error if variables begin with new- prefix;
+* Rename variables because Gformula macro will get an error if variables begin with new- prefix;
 data interp; set interp; 
-rename newchfage=chfage newbmi=bmi newsbp=sbp;
+rename newafage=afage newbmi=bmi newsbp=sbp;
 run;
 
 * Create lagged variables for g-formula call;
@@ -148,12 +147,12 @@ drop lagid;
 run;
 
 * Clear out rows after event and only look at 20 year risk;
-data interp3; set interp2; by id chf;  if chf=1 and first.chf=0 then delete; run;
+data interp3; set interp2; by id af;  if af=1 and first.af=0 then delete; run;
 data analysis; set interp3; by id; time+1; if first.id then time=0; run;
 data analysis20; set analysis; where time<20; run;
 
 proc means data=analysis20; run;
-proc freq data=analysis20; table time*chf; run;
+proc freq data=analysis20; table time*af; run;
 
 
 * Run g-formula macro;
@@ -168,7 +167,7 @@ proc freq data=analysis20; table time*chf; run;
 %gformula(
 data= analysis20,
 id=id,
-outc=chf,
+outc=af,
 outctype=binsurv,
 hazardratio=1,
 bootstrap_hazard=1,
