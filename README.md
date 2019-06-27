@@ -22,7 +22,9 @@ resultsrmst=
 resultshr=
 
 for the user to save RMST and HR output to a SAS dataset. This facilitates combining 
-results from multiple imputation with Rubin's rule.
+results from multiple imputation with Rubin's rule. We also modified the code to save
+the log risk ratio in the 'resultsdata' dataset, since risk ratios need to be on 
+the log scale when combined using Rubin's rule for multiple imputation.
 ```
 
 gformula negbin.SAS
