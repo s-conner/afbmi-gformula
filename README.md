@@ -1,4 +1,4 @@
-# Interpolating annual data and applying the GFORMULA SAS Macro (Harvard University)
+# Interpolating annual data and applying the GFORMULA SAS Macro
 
 This project contains SAS code to interpolate data between examinations at yearly increments. Modifications can be made to account for other units, i.e. months, weeks, etc. Unequal intervals between examinations poses an issue when deriving the restricted mean survival time (RMST), because RMST is in the time domain. The RMST is interpreted as the mean event-free life expectancy up to a given time point.
 
