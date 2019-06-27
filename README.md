@@ -2,6 +2,8 @@
 
 This project contains SAS code to interpolate data between examinations at yearly increments. Modifications can be made to account for other units, i.e. months, weeks, etc. Unequal intervals between examinations poses an issue when deriving the restricted mean survival time (RMST), because RMST is in the time domain. The RMST is interpreted as the mean event-free life expectancy up to a given time point.
 
+We thank the authors of the original GFORMULA SAS Macro (Roger W. Logan, Jessica  G. Young, Sarah L. Taubman, Sally Picciotto, Goodarz Danaei, Miguel A. Hernan) for programming this extensive algorithm. We only present our code to be transparent and do not take credit for their original code. The full GFORMULA SAS Macro doucumentation can be found here: https://www.hsph.harvard.edu/causal/software/
+
 example.SAS
 ```
 This code demonstrates how to apply linear interpolation and midpoint interpolation to unequally 
@@ -30,4 +32,3 @@ negative binomial model for the outcome hazard. This model was included as a
 sensitivity analysis.
 ```
 
-We thank the authors of the original GFORMULA SAS Macro (Roger W. Logan, Jessica  G. Young, Sarah L. Taubman, Sally Picciotto, Goodarz Danaei, Miguel A. Hernan) for programming this extensive algorithm. We only present our code to be transparent and do not take credit for their original code. The full GFORMULA SAS Macro doucumentation can be found here: https://www.hsph.harvard.edu/causal/software/
