@@ -155,7 +155,7 @@ proc means data=analysis20; run;
 proc freq data=analysis20; table time*af; run;
 
 
-* Run g-formula macro;
+* Run modified g-formula macro;
 
 %let interv1 = intno=1 ,  nintvar=1,
 	intlabel="Non-obese",
@@ -173,6 +173,11 @@ hazardratio=1,
 bootstrap_hazard=1,
 intcomp=2 1,
 refint=2,
+
+survdata=res.surv,
+resultsdata=res.riskresults,
+resultsrmst=res.rmstresults,
+resultshr=res.hrresults,
 
 time=time,
 timepoints = 20,
